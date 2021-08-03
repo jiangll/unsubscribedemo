@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>
+        邮件退订
+    </title>
+    <link rel="stylesheet" href="./css/unsubscribe.css?v=2" type="text/css" />
+    <link rel="stylesheet" href="./css/toast.css?v=1" type="text/css" />
+    <script type="text/javascript" src="./js/rem.js?v=1"></script>
+    <script type="text/javascript" src="./js/toast.js?v=1"></script>
+    <script type="text/javascript" src="./js/jquery3.4.0.min.js"></script>
+    <script type="text/javascript">
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            console.log('getQueryVariable:',
+                window.location.search, ' query:', query)
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) {
+                    return pair[1];
+                }
+            }
+            return (false);
+        }
+
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+        var unsubscribeEmail = ''
+        var unsubtype1 = 'never'
+        var unsubtype2 = 'never'
+        $(function() {
+            unsubscribeEmail = getQueryVariable("email")
+            console.log('unsubscribeEmail:', unsubscribeEmail)
+            $('input[type=radio][name=unsubtype1]').change(function() {
+                // 获取input radio选中值，方法一
+                // var myvalue = $('input:radio[name="unsubtype1"]:checked').val();
+                // 获取input radio选中值，方法二
+                unsubtype1 = $(this).val();
+                console.log('unsubtype1:', unsubtype1)
+            });
+            // 点击事件change
+            $('input[type=radio][name=unsubtype2]').change(function() {
+                // 获取input radio选中值，方法一
+                // var myvalue = $('input:radio[name="unsubtype2"]:checked').val();
+                // 获取input radio选中值，方法二
+                unsubtype2 = $(this).val();
+                console.log('unsubtype2:', unsubtype2)
+            });
+        });
+
+        function unsubMode(type) {
+            if (type == 'weak') {
+                return "每周不超过一次"
+            } else if (type == 'month') {
+                return "每月不超过一次"
+            } else {
+                return "永久退订"
+            }
+        }
+
+        function checkEmail(email) {
+            var emreg = /^\w{3,}(\.\w+)*@[A-z0-9]+(\.[A-z]{2,5}){1,2}$/;
+            return emreg.test(email)
+        }
+
+        function onConfirm1() {
+            if (!unsubscribeEmail) {
+                new $Toast("缺少必要参数")
+                return
+            }
+            var nbody = `退订方式：${unsubMode(unsubtype1)}`
+            window.document.location.href = `mailto:${unsubscribeEmail}?subject=${encodeURIComponent("取消订阅")}&body=${encodeURIComponent("确认退订邮件。\n" + nbody + '\n')}`
+        }
+
+        function onConfirm2() {
+            if (!unsubscribeEmail) {
+                new $Toast("缺少必要参数")
+                return
+            } else {
+                var userEmail = $('#userEmail').val()
+                console.log('userEmail:', userEmail)
+                if (!userEmail) {
+                    new $Toast("请输入您的邮箱地址")
+                    return
+                } else if (!checkEmail(userEmail)) {
+                    new $Toast("请输入正确的邮箱地址")
+                    return
+                }
+            }
+            // todo 发送退订请求
+            new $Toast("发送成功")
+        }
+    </script>
+</head>
+
+<body>
+    <noscript>
+      <strong>We're sorry the page doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div class="page-container">
+        <div class="section-group">
+            <div class="section-title">确认邮箱方式</div>
+            <div class="sction-content">
+                <h2 class="note-title">您确定要退订吗？</h2>
+                <div class="note-sub">您可能会错过我们的信息。</div>
+
+                <div class="radio-group">
+                    <label class="radio-title">请选择退订方式：</label>
+                    <label class="radio-label">
+                        <input type="radio" name="unsubtype1" value="week">  每周不超过一次
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="unsubtype1" value="month">  每月不超过一次
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="unsubtype1" value="never" checked>  永久退订
+                    </label>
+                </div>
+                <div class="time-note">请注意：这些更改最多可能需要48小时才能生效。</div>
+                <div class="confirm-btn" onclick="onConfirm1()">发送邮件确认</div>
+            </div>
+        </div>
+        <div class="section-group">
+            <div class="section-title">网络请求方式</div>
+
+            <div class="sction-content">
+                <h2 class="note-title">您确定要退订吗？</h2>
+                <div class="note-sub">您可能会错过我们的信息。</div>
+                <input class="email-input" id="userEmail" placeholder="请输入您的邮箱地址">
+                <div class="radio-group">
+                    <label class="radio-title">请选择退订方式：</label>
+                    <label class="radio-label">
+                            <input type="radio" name="unsubtype2" value="week">  每周不超过一次
+                        </label>
+                    <label class="radio-label">
+                            <input type="radio" name="unsubtype2" value="month">  每月不超过一次
+                        </label>
+                    <label class="radio-label">
+                            <input type="radio" name="unsubtype2" value="never" checked>  永久退订
+                        </label>
+                </div>
+            </div>
+            <div class="time-note">请注意：这些更改最多可能需要48小时才能生效。</div>
+            <div class="confirm-btn" onclick="onConfirm2()">确认</div>
+        </div>
+
+    </div>
+    </div>
+
+</body>
+
+</html>
