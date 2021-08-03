@@ -84,20 +84,20 @@
         }
 
         function onConfirm2() {
-            if (!unsubscribeEmail) {
-                new $Toast("缺少必要参数")
+            // if (!unsubscribeEmail) {
+            //     new $Toast("缺少必要参数")
+            //     return
+            // } else {
+            var userEmail = $('#userEmail').val()
+            console.log('userEmail:', userEmail)
+            if (!userEmail) {
+                new $Toast("请输入您的邮箱地址")
                 return
-            } else {
-                var userEmail = $('#userEmail').val()
-                console.log('userEmail:', userEmail)
-                if (!userEmail) {
-                    new $Toast("请输入您的邮箱地址")
-                    return
-                } else if (!checkEmail(userEmail)) {
-                    new $Toast("请输入正确的邮箱地址")
-                    return
-                }
+            } else if (!checkEmail(userEmail)) {
+                new $Toast("请输入正确的邮箱地址")
+                return
             }
+            // }
             // todo 发送退订请求
             new $Toast("发送成功")
         }
